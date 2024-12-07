@@ -69,7 +69,13 @@ p {
   border: 1px solid #4e75ff;
 }
 
+.button.load-more {
+  width: 126px;
+  margin-top: 32px;
+}
+
 .button {
+  box-sizing: border-box;
   border-radius: 8px;
   padding: 8px 16px;
   width: 91px;
