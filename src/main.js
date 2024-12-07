@@ -33,23 +33,16 @@ export function hideLoader() {
 
 let value = '';
 let currentPage = 1;
-let perPage = 200;
+let perPage = 15;
 
-// document.addEventListener('DOMContentLoaded', reloadFoo);
-
-// function reloadFoo() {
-//   loadBtn.hidden = true;
-//   loadBtn.style.display = 'none';
-// }
+document.addEventListener('DOMContentLoaded', () => {
+  loadBtn.hidden = true;
+  loadBtn.style.display = 'none';
+});
 
 if (!form.dataset.listenerAdded) {
-  // loadBtn.setAttribute('hidden', true);
-  // loadBtn.style.display = 'none';
   form.addEventListener('submit', event => {
     event.preventDefault();
-
-    // loadBtn.setAttribute('hidden', true);
-    // loadBtn.style.display = 'none';
 
     const input = event.target.elements.search;
     value = input.value.trim();
@@ -69,10 +62,11 @@ if (!form.dataset.listenerAdded) {
 
       gallery.innerHTML = '';
       hideLoader();
+      loadBtn.hidden = true;
+      loadBtn.style.display = 'none';
+
       return;
     } else {
-      // loadBtn.setAttribute('hidden', true);
-      // loadBtn.style.display = 'none';
       showLoader();
       fetchFoo(value)
         .then(data => {
@@ -96,8 +90,6 @@ if (!form.dataset.listenerAdded) {
           gallery.innerHTML = '';
 
           gallery.insertAdjacentHTML('beforeend', markup(data.hits));
-
-          // loadBtn.style.display = 'block';
 
           lightbox.refresh();
         })
@@ -134,6 +126,15 @@ loadBtn.addEventListener('click', async () => {
     const posts = await fetchFoo(value, currentPage);
     const totalPages = Math.ceil(posts.totalHits / perPage);
     gallery.insertAdjacentHTML('beforeend', markup(posts.hits));
+
+    const firstCard = gallery.firstElementChild;
+    if (firstCard) {
+      const { height: cardHeight } = firstCard.getBoundingClientRect();
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+      });
+    }
 
     if (currentPage >= totalPages) {
       loadBtn.setAttribute('hidden', true);

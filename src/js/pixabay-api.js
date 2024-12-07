@@ -11,7 +11,7 @@ export const fetchFoo = async (info, page = 1) => {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: 'true',
-    per_page: 200,
+    per_page: 15,
     page: page,
   });
 
