@@ -40,89 +40,89 @@ document.addEventListener('DOMContentLoaded', () => {
   loadBtn.style.display = 'none';
 });
 
-if (!form.dataset.listenerAdded) {
-  form.addEventListener('submit', event => {
-    event.preventDefault();
+form.addEventListener('submit', event => {
+  event.preventDefault();
 
-    const input = event.target.elements.search;
-    value = input.value.trim();
+  currentPage = 1;
 
+  const input = event.target.elements.search;
+  value = input.value.trim();
+
+  showLoader();
+
+  if (!value) {
+    iziToast.warning({
+      title: 'Warning',
+      message: 'Please enter a search query!',
+      position: 'topRight',
+      backgroundColor: '#f39c12',
+      messageColor: '#ffffff',
+      messageSize: '16px',
+      titleColor: '#ffffff',
+    });
+
+    gallery.innerHTML = '';
+    hideLoader();
+    loadBtn.hidden = true;
+    loadBtn.style.display = 'none';
+
+    return;
+  } else {
     showLoader();
-
-    if (!value) {
-      iziToast.warning({
-        title: 'Warning',
-        message: 'Please enter a search query!',
-        position: 'topRight',
-        backgroundColor: '#f39c12',
-        messageColor: '#ffffff',
-        messageSize: '16px',
-        titleColor: '#ffffff',
-      });
-
-      gallery.innerHTML = '';
-      hideLoader();
-      loadBtn.hidden = true;
-      loadBtn.style.display = 'none';
-
-      return;
-    } else {
-      showLoader();
-      fetchFoo(value)
-        .then(data => {
-          if (data.hits.length < perPage) {
-            loadBtn.setAttribute('hidden', true);
-            loadBtn.style.display = 'none';
-          }
-          if (data.hits.length === 0) {
-            loadBtn.setAttribute('hidden', true);
-            iziToast.error({
-              title: 'Error',
-              message:
-                'Sorry, there are no images matching your search query. Please try again!',
-              position: 'topRight',
-              backgroundColor: '#ef4040',
-              messageColor: '#ffffff',
-              messageSize: '16px',
-              titleColor: '#ffffff',
-            });
-          }
-          gallery.innerHTML = '';
-
-          gallery.insertAdjacentHTML('beforeend', markup(data.hits));
-
-          lightbox.refresh();
-        })
-        .catch(error => {
+    fetchFoo(value)
+      .then(data => {
+        if (data.hits.length < perPage) {
+          loadBtn.setAttribute('hidden', true);
+          loadBtn.style.display = 'none';
+        }
+        if (data.hits.length === 0) {
+          loadBtn.setAttribute('hidden', true);
           iziToast.error({
             title: 'Error',
-            message: `An error occurred: ${error.message}`,
+            message:
+              'Sorry, there are no images matching your search query. Please try again!',
             position: 'topRight',
             backgroundColor: '#ef4040',
             messageColor: '#ffffff',
             messageSize: '16px',
             titleColor: '#ffffff',
           });
-        })
-        .finally(() => {
-          hideLoader();
+        }
+        gallery.innerHTML = '';
+
+        gallery.insertAdjacentHTML('beforeend', markup(data.hits));
+
+        lightbox.refresh();
+      })
+      .catch(error => {
+        gallery.innerHTML = '';
+        iziToast.error({
+          title: 'Error',
+          message: `An error occurred: ${error.message}`,
+          position: 'topRight',
+          backgroundColor: '#ef4040',
+          messageColor: '#ffffff',
+          messageSize: '16px',
+          titleColor: '#ffffff',
         });
+      })
+      .finally(() => {
+        hideLoader();
+      });
 
-      loadBtn.removeAttribute('hidden');
-      loadBtn.style.display = 'block';
-    }
+    loadBtn.removeAttribute('hidden');
+    loadBtn.style.display = 'block';
+  }
 
-    form.reset();
-    return value;
-  });
-
-  form.dataset.listenerAdded = true;
-}
+  form.reset();
+  return value;
+});
 
 loadBtn.addEventListener('click', async () => {
   currentPage += 1;
 
   try {
+    showLoader();
     const posts = await fetchFoo(value, currentPage);
     const totalPages = Math.ceil(posts.totalHits / perPage);
     gallery.insertAdjacentHTML('beforeend', markup(posts.hits));
@@ -151,5 +151,7 @@ loadBtn.addEventListener('click', async () => {
     }
   } catch (error) {
     console.log(error);
+  } finally {
+    hideLoader();
   }
 });
