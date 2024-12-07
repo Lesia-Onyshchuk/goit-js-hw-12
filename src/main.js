@@ -35,18 +35,21 @@ let value = '';
 let currentPage = 1;
 let perPage = 200;
 
-document.addEventListener('DOMContentLoaded', reloadFoo);
+// document.addEventListener('DOMContentLoaded', reloadFoo);
 
-function reloadFoo() {
-  loadBtn.hidden = true;
-  loadBtn.style.display = 'none';
-}
+// function reloadFoo() {
+//   loadBtn.hidden = true;
+//   loadBtn.style.display = 'none';
+// }
 
 if (!form.dataset.listenerAdded) {
+  // loadBtn.setAttribute('hidden', true);
+  // loadBtn.style.display = 'none';
   form.addEventListener('submit', event => {
     event.preventDefault();
 
-    loadBtn.setAttribute('hidden', true);
+    // loadBtn.setAttribute('hidden', true);
+    // loadBtn.style.display = 'none';
 
     const input = event.target.elements.search;
     value = input.value.trim();
@@ -68,11 +71,14 @@ if (!form.dataset.listenerAdded) {
       hideLoader();
       return;
     } else {
+      // loadBtn.setAttribute('hidden', true);
+      // loadBtn.style.display = 'none';
       showLoader();
       fetchFoo(value)
         .then(data => {
           if (data.hits.length < perPage) {
             loadBtn.setAttribute('hidden', true);
+            loadBtn.style.display = 'none';
           }
           if (data.hits.length === 0) {
             loadBtn.setAttribute('hidden', true);
@@ -90,6 +96,8 @@ if (!form.dataset.listenerAdded) {
           gallery.innerHTML = '';
 
           gallery.insertAdjacentHTML('beforeend', markup(data.hits));
+
+          // loadBtn.style.display = 'block';
 
           lightbox.refresh();
         })
@@ -109,6 +117,7 @@ if (!form.dataset.listenerAdded) {
         });
 
       loadBtn.removeAttribute('hidden');
+      loadBtn.style.display = 'block';
     }
 
     form.reset();
@@ -127,7 +136,8 @@ loadBtn.addEventListener('click', async () => {
     gallery.insertAdjacentHTML('beforeend', markup(posts.hits));
 
     if (currentPage >= totalPages) {
-      loadBtn.hidden = true;
+      loadBtn.setAttribute('hidden', true);
+      loadBtn.style.display = 'none';
       return iziToast.error({
         title: 'Warning',
         message: "We're sorry, there are no more posts to load",
