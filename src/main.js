@@ -96,6 +96,10 @@ form.addEventListener('submit', event => {
       })
       .catch(error => {
         gallery.innerHTML = '';
+
+        loadBtn.setAttribute('hidden', true);
+        loadBtn.style.display = 'none';
+
         iziToast.error({
           title: 'Error',
           message: `An error occurred: ${error.message}`,
@@ -126,6 +130,8 @@ loadBtn.addEventListener('click', async () => {
     const posts = await fetchFoo(value, currentPage);
     const totalPages = Math.ceil(posts.totalHits / perPage);
     gallery.insertAdjacentHTML('beforeend', markup(posts.hits));
+
+    lightbox.refresh();
 
     const firstCard = gallery.firstElementChild;
     if (firstCard) {
